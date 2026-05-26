@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Currency Identifier</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background: #0a0a0a;
+        color: #e8e8e4;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 3rem 1.5rem;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 620px;
+      }
+
+      .header {
+        margin-bottom: 2.5rem;
+      }
+
+      .logo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c9a96e;
+      }
+
+      .app-name {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #c9a96e;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 300;
+        color: #f0ede8;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: #5a5a52;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+      }
+
+      .search-box {
+        background: #111110;
+        border: 0.5px solid #2a2a26;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 1rem;
+      }
+
+      .field label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #3a3a34;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .field input {
+        width: 100%;
+        padding: 11px 14px;
+        font-size: 15px;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        background: #0a0a0a;
+        border: 0.5px solid #2a2a26;
+        border-radius: 10px;
+        color: #e8e8e4;
+        outline: none;
+        transition: border-color 0.2s;
+        letter-spacing: 0.02em;
+      }
+
+      .field input::placeholder {
+        color: #2e2e28;
+      }
+      .field input:focus {
+        border-color: #c9a96e;
+      }
+
+      .btns {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+
+      .btn-search {
+        padding: 11px;
+        font-size: 13px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        background: #c9a96e;
+        color: #0a0a0a;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+
+      .btn-search:hover {
+        background: #d4b87e;
+      }
+      .btn-search:active {
+        transform: scale(0.98);
+      }
+
+      .btn-clear {
+        padding: 11px 18px;
+        font-size: 13px;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        background: transparent;
+        color: #3a3a34;
+        border: 0.5px solid #2a2a26;
+        border-radius: 10px;
+        cursor: pointer;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+      }
+
+      .btn-clear:hover {
+        color: #6a6a60;
+        border-color: #3a3a34;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: #3a3a34;
+        margin-bottom: 0.75rem;
+        padding-left: 2px;
+        letter-spacing: 0.01em;
+      }
+
+      .results {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .card {
+        background: #111110;
+        border: 0.5px solid #2a2a26;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: border-color 0.2s;
+      }
+
+      .card:hover {
+        border-color: #3a3a34;
+      }
+
+      .card.highlight {
+        border-color: #c9a96e;
+        background: #131210;
+      }
+
+      .card-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .symbol-box {
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
+        background: #161614;
+        border: 0.5px solid #2a2a26;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: 400;
+        color: #c9a96e;
+        flex-shrink: 0;
+      }
+
+      .currency-code {
+        font-size: 14px;
+        font-weight: 500;
+        color: #e8e8e4;
+        letter-spacing: 0.02em;
+        margin-bottom: 3px;
+      }
+
+      .currency-name {
+        font-size: 12px;
+        color: #3a3a34;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+      }
+
+      .match-badge {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: #1a1a14;
+        color: #c9a96e;
+        border: 0.5px solid #c9a96e33;
+        padding: 3px 10px;
+        border-radius: 99px;
+        margin-top: 5px;
+        display: inline-block;
+      }
+
+      .copy-btn {
+        padding: 7px 16px;
+        font-size: 12px;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        background: transparent;
+        color: #3a3a34;
+        border: 0.5px solid #2a2a26;
+        border-radius: 8px;
+        cursor: pointer;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+        flex-shrink: 0;
+      }
+
+      .copy-btn:hover {
+        color: #c9a96e;
+        border-color: #c9a96e55;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: #2a2a26;
+        font-size: 13px;
+        background: #111110;
+        border: 0.5px solid #1e1e1a;
+        border-radius: 14px;
+        letter-spacing: 0.02em;
+      }
+
+      .divider {
+        height: 0.5px;
+        background: #1e1e1a;
+        margin: 2rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="header">
+        <div class="logo-row">
+          <div class="logo-dot"></div>
+          <span class="app-name">Currency Identifier</span>
+        </div>
+        <h1>Identify any<br />currency symbol</h1>
+        <p class="subtitle">
+          Paste a symbol. Add an IATA code to pinpoint the exact currency.
+        </p>
+      </div>
+
+      <div class="search-box">
+        <div class="inputs">
+          <div class="field">
+            <label>Currency symbol</label>
+            <input
+              type="text"
+              id="symInput"
+              placeholder="$ £ € ₺ ¥"
+              maxlength="5"
+            />
+          </div>
+          <div class="field">
+            <label>IATA code — optional</label>
+            <input
+              type="text"
+              id="iataInput"
+              placeholder="YYZ  JFK  IST"
+              maxlength="3"
+            />
+          </div>
+        </div>
+        <div class="btns">
+          <button class="btn-search" onclick="doSearch()">Search</button>
+          <button class="btn-clear" onclick="doClear()">Clear</button>
+        </div>
+      </div>
+
+      <div class="hint" id="hint"></div>
+      <div class="results" id="results">
+        <div class="empty">Enter a symbol above to identify a currency</div>
+      </div>
+    </div>
+
+    <script>
+      const DB = [
+        {
+          symbol: "$",
+          code: "USD",
+          name: "US Dollar",
+          country: "United States",
+          iata: [
+            "JFK",
+            "LAX",
+            "ORD",
+            "SFO",
+            "MIA",
+            "DFW",
+            "ATL",
+            "SEA",
+            "BOS",
+            "IAH",
+            "LGA",
+            "EWR",
+            "DEN",
+            "PHX",
+            "MCO",
+          ],
+        },
+        {
+          symbol: "$",
+          code: "CAD",
+          name: "Canadian Dollar",
+          country: "Canada",
+          iata: ["YYZ", "YVR", "YUL", "YYC", "YEG", "YOW", "YHZ", "YWG"],
+        },
+        {
+          symbol: "$",
+          code: "AUD",
+          name: "Australian Dollar",
+          country: "Australia",
+          iata: ["SYD", "MEL", "BNE", "PER", "ADL", "CBR", "OOL", "CNS"],
+        },
+        {
+          symbol: "$",
+          code: "NZD",
+          name: "New Zealand Dollar",
+          country: "New Zealand",
+          iata: ["AKL", "WLG", "CHC", "ZQN", "DUD"],
+        },
+        {
+          symbol: "$",
+          code: "SGD",
+          name: "Singapore Dollar",
+          country: "Singapore",
+          iata: ["SIN"],
+        },
+        {
+          symbol: "$",
+          code: "HKD",
+          name: "Hong Kong Dollar",
+          country: "Hong Kong",
+          iata: ["HKG"],
+        },
+        {
+          symbol: "$",
+          code: "MXN",
+          name: "Mexican Peso",
+          country: "Mexico",
+          iata: ["MEX", "CUN", "GDL", "MTY", "TIJ", "SJD", "PVR", "MID"],
+        },
+        {
+          symbol: "$",
+          code: "BRL",
+          name: "Brazilian Real",
+          country: "Brazil",
+          iata: ["GRU", "GIG", "BSB", "SSA", "FOR", "REC", "CNF", "POA"],
+        },
+        {
+          symbol: "$",
+          code: "CLP",
+          name: "Chilean Peso",
+          country: "Chile",
+          iata: ["SCL", "IQQ", "ANF", "PMC"],
+        },
+        {
+          symbol: "$",
+          code: "COP",
+          name: "Colombian Peso",
+          country: "Colombia",
+          iata: ["BOG", "MDE", "CLO", "BAQ", "CTG"],
+        },
+        {
+          symbol: "£",
+          code: "GBP",
+          name: "British Pound",
+          country: "United Kingdom",
+          iata: ["LHR", "LGW", "MAN", "EDI", "BHX", "GLA", "LTN", "STN", "BRS"],
+        },
+        {
+          symbol: "£",
+          code: "EGP",
+          name: "Egyptian Pound",
+          country: "Egypt",
+          iata: ["CAI", "HRG", "SSH", "LXR", "ASW"],
+        },
+        {
+          symbol: "£",
+          code: "LBP",
+          name: "Lebanese Pound",
+          country: "Lebanon",
+          iata: ["BEY"],
+        },
+        {
+          symbol: "£",
+          code: "SYP",
+          name: "Syrian Pound",
+          country: "Syria",
+          iata: ["DAM", "ALP"],
+        },
+        {
+          symbol: "€",
+          code: "EUR",
+          name: "Euro",
+          country: "Eurozone",
+          iata: [
+            "CDG",
+            "FRA",
+            "AMS",
+            "MAD",
+            "FCO",
+            "MUC",
+            "BCN",
+            "LIS",
+            "VIE",
+            "ZRH",
+            "BRU",
+            "DUB",
+            "ATH",
+            "PRG",
+            "WAW",
+            "BUD",
+            "HEL",
+            "CPH",
+            "ARN",
+            "OSL",
+          ],
+        },
+        {
+          symbol: "¥",
+          code: "JPY",
+          name: "Japanese Yen",
+          country: "Japan",
+          iata: ["NRT", "HND", "KIX", "NGO", "FUK", "CTS", "OKA", "ITM"],
+        },
+        {
+          symbol: "¥",
+          code: "CNY",
+          name: "Chinese Yuan",
+          country: "China",
+          iata: ["PEK", "PVG", "CAN", "SZX", "CTU", "KMG", "XIY", "CKG", "WUH"],
+        },
+        {
+          symbol: "₺",
+          code: "TRY",
+          name: "Turkish Lira",
+          country: "Turkey",
+          iata: ["IST", "SAW", "ESB", "ADB", "AYT", "BJV", "DLM", "GZT", "KYA"],
+        },
+        {
+          symbol: "₹",
+          code: "INR",
+          name: "Indian Rupee",
+          country: "India",
+          iata: [
+            "DEL",
+            "BOM",
+            "BLR",
+            "MAA",
+            "CCU",
+            "HYD",
+            "COK",
+            "GAU",
+            "AMD",
+            "JAI",
+          ],
+        },
+        {
+          symbol: "₩",
+          code: "KRW",
+          name: "South Korean Won",
+          country: "South Korea",
+          iata: ["ICN", "GMP", "PUS", "CJU", "TAE"],
+        },
+        {
+          symbol: "₽",
+          code: "RUB",
+          name: "Russian Ruble",
+          country: "Russia",
+          iata: ["SVO", "DME", "VKO", "LED", "OVB", "SVX", "KJA"],
+        },
+        {
+          symbol: "₾",
+          code: "GEL",
+          name: "Georgian Lari",
+          country: "Georgia",
+          iata: ["TBS", "BUS", "KUT"],
+        },
+        {
+          symbol: "kr",
+          code: "SEK",
+          name: "Swedish Krona",
+          country: "Sweden",
+          iata: ["ARN", "GOT", "MMX", "BMA"],
+        },
+        {
+          symbol: "kr",
+          code: "NOK",
+          name: "Norwegian Krone",
+          country: "Norway",
+          iata: ["OSL", "BGO", "TRD", "SVG", "TOS"],
+        },
+        {
+          symbol: "kr",
+          code: "DKK",
+          name: "Danish Krone",
+          country: "Denmark",
+          iata: ["CPH", "BLL", "AAL", "AAR"],
+        },
+        {
+          symbol: "Fr",
+          code: "CHF",
+          name: "Swiss Franc",
+          country: "Switzerland",
+          iata: ["ZRH", "GVA", "BSL", "BRN"],
+        },
+        {
+          symbol: "zł",
+          code: "PLN",
+          name: "Polish Zloty",
+          country: "Poland",
+          iata: ["WAW", "KRK", "GDN", "KTW", "WRO"],
+        },
+        {
+          symbol: "Kč",
+          code: "CZK",
+          name: "Czech Koruna",
+          country: "Czech Republic",
+          iata: ["PRG", "BRQ", "OSR"],
+        },
+        {
+          symbol: "Ft",
+          code: "HUF",
+          name: "Hungarian Forint",
+          country: "Hungary",
+          iata: ["BUD", "DEB"],
+        },
+        {
+          symbol: "₴",
+          code: "UAH",
+          name: "Ukrainian Hryvnia",
+          country: "Ukraine",
+          iata: ["KBP", "LWO", "ODS"],
+        },
+        {
+          symbol: "₪",
+          code: "ILS",
+          name: "Israeli Shekel",
+          country: "Israel",
+          iata: ["TLV", "ETH", "HFA"],
+        },
+        {
+          symbol: "ر.س",
+          code: "SAR",
+          name: "Saudi Riyal",
+          country: "Saudi Arabia",
+          iata: ["RUH", "JED", "DMM", "MED"],
+        },
+        {
+          symbol: "د.إ",
+          code: "AED",
+          name: "UAE Dirham",
+          country: "UAE",
+          iata: ["DXB", "AUH", "SHJ"],
+        },
+        {
+          symbol: "ر.ق",
+          code: "QAR",
+          name: "Qatari Riyal",
+          country: "Qatar",
+          iata: ["DOH", "XJD"],
+        },
+        {
+          symbol: "د.ك",
+          code: "KWD",
+          name: "Kuwaiti Dinar",
+          country: "Kuwait",
+          iata: ["KWI"],
+        },
+        {
+          symbol: "RM",
+          code: "MYR",
+          name: "Malaysian Ringgit",
+          country: "Malaysia",
+          iata: ["KUL", "PEN", "BKI", "KCH"],
+        },
+        {
+          symbol: "฿",
+          code: "THB",
+          name: "Thai Baht",
+          country: "Thailand",
+          iata: ["BKK", "DMK", "HKT", "CNX"],
+        },
+        {
+          symbol: "₫",
+          code: "VND",
+          name: "Vietnamese Dong",
+          country: "Vietnam",
+          iata: ["SGN", "HAN", "DAD", "CXR", "PQC"],
+        },
+        {
+          symbol: "Rp",
+          code: "IDR",
+          name: "Indonesian Rupiah",
+          country: "Indonesia",
+          iata: ["CGK", "DPS", "SUB", "MES", "UPG"],
+        },
+        {
+          symbol: "₱",
+          code: "PHP",
+          name: "Philippine Peso",
+          country: "Philippines",
+          iata: ["MNL", "CEB", "DVO", "ILO"],
+        },
+        {
+          symbol: "R",
+          code: "ZAR",
+          name: "South African Rand",
+          country: "South Africa",
+          iata: ["JNB", "CPT", "DUR", "PLZ"],
+        },
+        {
+          symbol: "د.م",
+          code: "MAD",
+          name: "Moroccan Dirham",
+          country: "Morocco",
+          iata: ["CMN", "RAK", "AGA", "TNG", "FEZ"],
+        },
+      ];
+
+      function doSearch() {
+        const sym = document.getElementById("symInput").value.trim();
+        const iata = document
+          .getElementById("iataInput")
+          .value.trim()
+          .toUpperCase();
+        const resultsDiv = document.getElementById("results");
+        const hintDiv = document.getElementById("hint");
+
+        if (!sym) {
+          resultsDiv.innerHTML =
+            '<div class="empty">Please enter a currency symbol</div>';
+          hintDiv.textContent = "";
+          return;
+        }
+
+        let matches = DB.filter((c) => c.symbol === sym);
+
+        if (matches.length === 0) {
+          resultsDiv.innerHTML =
+            '<div class="empty">No results found — try $, £, €, ₺, ¥, ₹, ₾ etc.</div>';
+          hintDiv.textContent = "";
+          return;
+        }
+
+        let highlighted = null;
+        if (iata) {
+          const exact = matches.find((c) => c.iata.includes(iata));
+          if (exact) highlighted = exact.code;
+        }
+
+        if (highlighted) {
+          hintDiv.textContent =
+            "Airport matched — highlighted result is your currency.";
+        } else if (iata) {
+          hintDiv.textContent =
+            "No airport match found. Showing all currencies with this symbol.";
+        } else if (matches.length > 1) {
+          hintDiv.textContent =
+            matches.length +
+            " currencies share this symbol. Add an IATA code to narrow down.";
+        } else {
+          hintDiv.textContent = "";
+        }
+
+        resultsDiv.innerHTML = matches
+          .map((c) => {
+            const isHL = highlighted === c.code;
+            return `
+      <div class="card ${isHL ? "highlight" : ""}">
+        <div class="card-left">
+          <div class="symbol-box">${c.symbol}</div>
+          <div>
+            <div class="currency-code">${c.code} &nbsp;·&nbsp; ${c.name}</div>
+            <div class="currency-name">${c.country}</div>
+            ${isHL ? '<span class="match-badge">Airport match</span>' : ""}
+          </div>
+        </div>
+        <button class="copy-btn" onclick="copyCode('${c.code}', this)">Copy</button>
+      </div>`;
+          })
+          .join("");
+      }
+
+      function copyCode(code, btn) {
+        navigator.clipboard.writeText(code).then(() => {
+          btn.textContent = "Copied";
+          setTimeout(() => (btn.textContent = "Copy"), 1500);
+        });
+      }
+
+      function doClear() {
+        document.getElementById("symInput").value = "";
+        document.getElementById("iataInput").value = "";
+        document.getElementById("results").innerHTML =
+          '<div class="empty">Enter a symbol above to identify a currency</div>';
+        document.getElementById("hint").textContent = "";
+      }
+
+      document.getElementById("symInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doSearch();
+      });
+      document.getElementById("iataInput").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doSearch();
+      });
+    </script>
+  </body>
+</html>
